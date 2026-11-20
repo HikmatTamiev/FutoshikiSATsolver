@@ -7,14 +7,17 @@ def read_order(text):
         if line == "" or line.startswith("#"):
             continue
         return int(line)
-    raise ValueError("The file does not contain an order.")
+    print("The file does not contain an order.")
+    return None
 
 
 def main():
     path = sys.argv[1]
-    with open(path, encoding="utf-8") as handle:
+    with open(path) as handle:
         text = handle.read()
     order = read_order(text)
+    if order is None:
+        return
     print("Futoshiki order", order)
 
 

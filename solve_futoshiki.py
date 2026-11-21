@@ -46,6 +46,9 @@ def read_grid(text, order):
 
 
 def main():
+    if len(sys.argv) < 2:
+        print("Add the file name: python solve_futoshiki.py instances/grid.txt")
+        return
     path = sys.argv[1]
     with open(path) as handle:
         text = handle.read()

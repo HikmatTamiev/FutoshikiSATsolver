@@ -1,0 +1,6 @@
+# Order, then one row per line. A dot is an empty cell.
+4
+1 . . 4
+. . . .
+. . . .
+4 . . 1

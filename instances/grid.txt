@@ -1,6 +1,8 @@
-# A sign between two cells belongs to that row. One row can hold several signs.
+# A sign on a row sits between two cells of that row.
+# A line after the grid names cells as row,column. The first row is 1.
 4
 1 . < . 4
 . . . .
 . . . .
 4 . . 1
+1,1 > 2,1  2,4 < 3,4

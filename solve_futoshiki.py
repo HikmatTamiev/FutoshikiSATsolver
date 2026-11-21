@@ -11,44 +11,27 @@ def read_order(text):
     return None
 
 
+def split_sign(token):
+    pieces = []
+    word = ""
+    for character in token:
+        if character == "<" or character == ">":
+            if word != "":
+                pieces.append(word)
+                word = ""
+            pieces.append(character)
+        else:
+            word = word + character
+    if word != "":
+        pieces.append(word)
+    return pieces
+
+
 def read_grid(text, order):
     rows = []
-    skipped_order = False
-    for raw_line in text.splitlines():
-        line = raw_line.strip()
-        if line == "" or line.startswith("#"):
-            continue
-        if skipped_order == False:
-            skipped_order = True
-            continue
-        cells = line.split()
-        if len(cells) != order:
-            print("A grid row must contain", order, "cells.")
-            return None
-        row = []
-        for cell in cells:
-            if cell == ".":
-                row.append(None)
-            elif cell.isdigit():
-                number = int(cell)
-                if number < 1 or number > order:
-                    print("A cell number must be from 1 to", order)
-                    return None
-                row.append(number)
-            else:
-                print("A cell must be a number or a dot.")
-                return None
-        rows.append(row)
-        if len(rows) == order:
-            return rows
-    print("The file does not contain", order, "grid rows.")
-    return None
-
-
-def read_inequalities(text, order):
     inequalities = []
     skipped_order = False
-    rows_left = order
+    row_number = 0
     for raw_line in text.splitlines():
         line = raw_line.strip()
         if line == "" or line.startswith("#"):
@@ -56,34 +39,47 @@ def read_inequalities(text, order):
         if skipped_order == False:
             skipped_order = True
             continue
-        if rows_left > 0:
-            rows_left = rows_left - 1
-            continue
-        parts = line.split()
-        if len(parts) != 5 or (parts[2] != "<" and parts[2] != ">"):
-            print("An inequality must look like: 1 2 < 1 3")
+        row_number = row_number + 1
+        tokens = []
+        for token in line.split():
+            for piece in split_sign(token):
+                tokens.append(piece)
+        row = []
+        sign = ""
+        for token in tokens:
+            if token == "<" or token == ">":
+                if len(row) == 0 or sign != "":
+                    print("A sign must sit between two cells.")
+                    return None
+                sign = token
+            elif token == "." or token.isdigit():
+                if token == ".":
+                    number = None
+                else:
+                    number = int(token)
+                    if number < 1 or number > order:
+                        print("A cell number must be from 1 to", order)
+                        return None
+                if sign != "":
+                    left_column = len(row)
+                    right_column = left_column + 1
+                    inequalities.append([row_number, left_column, sign, row_number, right_column])
+                    sign = ""
+                row.append(number)
+            else:
+                print("A cell must be a number or a dot, and a sign must be < or >.")
+                return None
+        if sign != "":
+            print("A sign must sit between two cells.")
             return None
-        if parts[0].isdigit() == False or parts[1].isdigit() == False or parts[3].isdigit() == False or parts[4].isdigit() == False:
-            print("An inequality's positions must be whole numbers.")
+        if len(row) != order:
+            print("A grid row must contain", order, "cells.")
             return None
-        left_row = int(parts[0])
-        left_column = int(parts[1])
-        right_row = int(parts[3])
-        right_column = int(parts[4])
-        if left_row < 1 or left_row > order or left_column < 1 or left_column > order or right_row < 1 or right_row > order or right_column < 1 or right_column > order:
-            print("An inequality's positions must be from 1 to", order)
-            return None
-        row_gap = left_row - right_row
-        if row_gap < 0:
-            row_gap = -row_gap
-        column_gap = left_column - right_column
-        if column_gap < 0:
-            column_gap = -column_gap
-        if row_gap + column_gap != 1:
-            print("An inequality must join two cells that share a side.")
-            return None
-        inequalities.append([left_row, left_column, parts[2], right_row, right_column])
-    return inequalities
+        rows.append(row)
+        if len(rows) == order:
+            return [rows, inequalities]
+    print("The file does not contain", order, "grid rows.")
+    return None
 
 
 def main():
@@ -96,12 +92,11 @@ def main():
     order = read_order(text)
     if order is None:
         return
-    grid = read_grid(text, order)
-    if grid is None:
+    result = read_grid(text, order)
+    if result is None:
         return
-    inequalities = read_inequalities(text, order)
-    if inequalities is None:
-        return
+    grid = result[0]
+    inequalities = result[1]
     print("Futoshiki order", order)
     for row in grid:
         print(row)

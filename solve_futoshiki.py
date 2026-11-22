@@ -11,22 +11,6 @@ def read_order(text):
     return None
 
 
-def split_sign(token):
-    pieces = []
-    word = ""
-    for character in token:
-        if character == "<" or character == ">":
-            if word != "":
-                pieces.append(word)
-                word = ""
-            pieces.append(character)
-        else:
-            word = word + character
-    if word != "":
-        pieces.append(word)
-    return pieces
-
-
 def read_position(token, order):
     parts = token.split(",")
     if len(parts) != 2 or parts[0].isdigit() == False or parts[1].isdigit() == False:
@@ -53,10 +37,7 @@ def share_a_side(first, second):
 
 
 def read_sign_line(line, order, inequalities):
-    tokens = []
-    for token in line.split():
-        for piece in split_sign(token):
-            tokens.append(piece)
+    tokens = line.split()
     sign = ""
     cell = None
     cell_needs_sign = False
@@ -108,10 +89,7 @@ def read_grid(text, order):
                 return None
             continue
         row_number = row_number + 1
-        tokens = []
-        for token in line.split():
-            for piece in split_sign(token):
-                tokens.append(piece)
+        tokens = line.split()
         row = []
         sign = ""
         for token in tokens:

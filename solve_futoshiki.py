@@ -128,6 +128,10 @@ def read_grid(text, order):
     return None
 
 
+def variable_number(row, column, value, order):
+    return ((row - 1) * order + (column - 1)) * order + value
+
+
 def main():
     if len(sys.argv) < 2:
         print("Add the file name: python solve_futoshiki.py instances/grid.txt")
@@ -151,6 +155,7 @@ def main():
         print("none")
     for item in inequalities:
         print(item[0], item[1], item[2], item[3], item[4])
+    print("Row 1 column 1 value 1 is variable", variable_number(1, 1, 1, order))
 
 
 if __name__ == "__main__":

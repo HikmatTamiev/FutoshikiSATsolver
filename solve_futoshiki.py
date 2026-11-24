@@ -132,6 +132,18 @@ def variable_number(row, column, value, order):
     return ((row - 1) * order + (column - 1)) * order + value
 
 
+def cell_has_a_number(order):
+    clauses = []
+    for row in range(1, order + 1):
+        for column in range(1, order + 1):
+            clause = []
+            for value in range(1, order + 1):
+                clause.append(variable_number(row, column, value, order))
+            clause.append(0)
+            clauses.append(clause)
+    return clauses
+
+
 def main():
     if len(sys.argv) < 2:
         print("Add the file name: python solve_futoshiki.py instances/grid.txt")
@@ -156,6 +168,9 @@ def main():
     for item in inequalities:
         print(item[0], item[1], item[2], item[3], item[4])
     print("Row 1 column 1 value 1 is variable", variable_number(1, 1, 1, order))
+    print("At least one number")
+    for clause in cell_has_a_number(order):
+        print(clause)
 
 
 if __name__ == "__main__":

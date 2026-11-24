@@ -144,6 +144,20 @@ def cell_has_a_number(order):
     return clauses
 
 
+def cell_has_at_most_one(order):
+    clauses = []
+    for row in range(1, order + 1):
+        for column in range(1, order + 1):
+            for first in range(1, order + 1):
+                for second in range(first + 1, order + 1):
+                    clause = []
+                    clause.append(-variable_number(row, column, first, order))
+                    clause.append(-variable_number(row, column, second, order))
+                    clause.append(0)
+                    clauses.append(clause)
+    return clauses
+
+
 def main():
     if len(sys.argv) < 2:
         print("Add the file name: python solve_futoshiki.py instances/grid.txt")
@@ -171,6 +185,15 @@ def main():
     print("At least one number")
     for clause in cell_has_a_number(order):
         print(clause)
+    at_most_one = cell_has_at_most_one(order)
+    print("At most one number, clause count", len(at_most_one))
+    print("At most one number, row 3 column 4")
+    low = variable_number(3, 4, 1, order)
+    high = variable_number(3, 4, order, order)
+    for clause in at_most_one:
+        number = -clause[0]
+        if number >= low and number <= high:
+            print(clause)
 
 
 if __name__ == "__main__":

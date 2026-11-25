@@ -224,6 +224,30 @@ def given_number(grid, order):
     return clauses
 
 
+def sign_clauses(inequalities, order):
+    clauses = []
+    for item in inequalities:
+        left_row = item[0]
+        left_column = item[1]
+        sign = item[2]
+        right_row = item[3]
+        right_column = item[4]
+        for left_value in range(1, order + 1):
+            for right_value in range(1, order + 1):
+                broken = False
+                if sign == ">" and left_value <= right_value:
+                    broken = True
+                if sign == "<" and left_value >= right_value:
+                    broken = True
+                if broken == True:
+                    clause = []
+                    clause.append(-variable_number(left_row, left_column, left_value, order))
+                    clause.append(-variable_number(right_row, right_column, right_value, order))
+                    clause.append(0)
+                    clauses.append(clause)
+    return clauses
+
+
 def main():
     if len(sys.argv) < 2:
         print("Add the file name: python solve_futoshiki.py instances/grid.txt")
@@ -297,6 +321,22 @@ def main():
     print("Given numbers")
     for clause in given_number(grid, order):
         print(clause)
+    sign_list = sign_clauses(inequalities, order)
+    print("Signs, clause count", len(sign_list))
+    if len(inequalities) > 0:
+        first = inequalities[0]
+        print("First sign", first[0], first[1], first[2], first[3], first[4])
+        left_values = []
+        for value in range(1, order + 1):
+            left_values.append(variable_number(first[0], first[1], value, order))
+        for clause in sign_list:
+            number = -clause[0]
+            found = False
+            for target in left_values:
+                if number == target:
+                    found = True
+            if found == True:
+                print(clause)
 
 
 if __name__ == "__main__":

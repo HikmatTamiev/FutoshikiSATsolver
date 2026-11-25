@@ -322,6 +322,14 @@ def grid_from_model(output, order):
     return solved
 
 
+def read_cpu_time(output):
+    for line in output.splitlines():
+        if line.startswith("c CPU time"):
+            parts = line.split(":")
+            return parts[1].strip()
+    return None
+
+
 def main():
     if len(sys.argv) < 2:
         print("Add the file name: python solve_futoshiki.py instances/grid.txt")
@@ -342,6 +350,7 @@ def main():
     output = run_glucose("futoshiki.cnf", "glucose.exe")
     if output is None:
         return
+    print("Solver time:", read_cpu_time(output))
     solved = grid_from_model(output, order)
     if solved is None:
         print("No valid solution exists.")

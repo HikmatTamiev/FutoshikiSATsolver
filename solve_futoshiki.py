@@ -299,6 +299,29 @@ def run_glucose(cnf_path, glucose_path):
     return completed.stdout
 
 
+def grid_from_model(output, order):
+    true_numbers = []
+    for line in output.splitlines():
+        if line.startswith("v "):
+            for token in line.split():
+                if token == "v":
+                    continue
+                number = int(token)
+                if number > 0:
+                    true_numbers.append(number)
+    if len(true_numbers) == 0:
+        return None
+    solved = []
+    for row in range(1, order + 1):
+        solved_row = []
+        for column in range(1, order + 1):
+            for value in range(1, order + 1):
+                if variable_number(row, column, value, order) in true_numbers:
+                    solved_row.append(value)
+        solved.append(solved_row)
+    return solved
+
+
 def main():
     if len(sys.argv) < 2:
         print("Add the file name: python solve_futoshiki.py instances/grid.txt")
@@ -390,7 +413,19 @@ def main():
                 print(clause)
     clauses = all_clauses(grid, inequalities, order)
     write_cnf("futoshiki.cnf", order, clauses)
-    run_glucose("futoshiki.cnf", "glucose.exe")
+    output = run_glucose("futoshiki.cnf", "glucose.exe")
+    if output is None:
+        return
+    solved = grid_from_model(output, order)
+    if solved is None:
+        print("No valid solution exists.")
+        return
+    print("Solved grid")
+    for solved_row in solved:
+        line = ""
+        for value in solved_row:
+            line = line + str(value) + " "
+        print(line)
 
 
 if __name__ == "__main__":

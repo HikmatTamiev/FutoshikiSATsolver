@@ -175,6 +175,9 @@ All puzzle files are in the `instances` folder.
 - *unsat.txt:*
   A small 4×4 puzzle with no solution. Row 1 has `<` between every cell, so it must be 1 2 3 4. The last line says row 1 column 1 is bigger than the cell below it, which is impossible because that cell is 1.
 
+- *sixteen.txt:*
+  A 16×16 puzzle with a solution. I generated it from a filled grid, kept many of the numbers, and added signs that agree with it.
+
 ---
 
 ## 7. Experiment Results
@@ -183,7 +186,7 @@ All puzzle files are in the `instances` folder.
 |--------|------|--------|------|
 | easy.txt | 4×4 | SAT | 0.016 s |
 | unsat.txt | 4×4 | UNSAT | 0.013 s |
-| Generated (slowest) | 16×16 | SAT | 0.08 s |
+| sixteen.txt | 16×16 | SAT | 0.05 s |
 
 The small puzzles work instantly.
 

@@ -1,3 +1,5 @@
+import os
+import subprocess
 import sys
 
 
@@ -283,6 +285,20 @@ def write_cnf(path, order, clauses):
     print(clause_count, "clauses")
 
 
+def run_glucose(cnf_path, glucose_path):
+    if os.path.isfile(glucose_path) == False:
+        print("Glucose was not found at", glucose_path)
+        return None
+    completed = subprocess.run([glucose_path, "-model", cnf_path], capture_output=True, text=True)
+    if completed.returncode == 10:
+        print("SAT")
+    elif completed.returncode == 20:
+        print("UNSAT")
+    else:
+        print("Glucose stopped with code", completed.returncode)
+    return completed.stdout
+
+
 def main():
     if len(sys.argv) < 2:
         print("Add the file name: python solve_futoshiki.py instances/grid.txt")
@@ -374,6 +390,7 @@ def main():
                 print(clause)
     clauses = all_clauses(grid, inequalities, order)
     write_cnf("futoshiki.cnf", order, clauses)
+    run_glucose("futoshiki.cnf", "glucose.exe")
 
 
 if __name__ == "__main__":

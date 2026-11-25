@@ -210,6 +210,20 @@ def column_has_at_most_one(order):
     return clauses
 
 
+def given_number(grid, order):
+    clauses = []
+    for row in range(1, order + 1):
+        for column in range(1, order + 1):
+            number = grid[row - 1][column - 1]
+            if number == None:
+                continue
+            clause = []
+            clause.append(variable_number(row, column, number, order))
+            clause.append(0)
+            clauses.append(clause)
+    return clauses
+
+
 def main():
     if len(sys.argv) < 2:
         print("Add the file name: python solve_futoshiki.py instances/grid.txt")
@@ -280,6 +294,9 @@ def main():
                 found = True
         if found == True:
             print(clause)
+    print("Given numbers")
+    for clause in given_number(grid, order):
+        print(clause)
 
 
 if __name__ == "__main__":

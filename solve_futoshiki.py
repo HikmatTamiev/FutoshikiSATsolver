@@ -248,6 +248,41 @@ def sign_clauses(inequalities, order):
     return clauses
 
 
+def all_clauses(grid, inequalities, order):
+    clauses = []
+    for clause in cell_has_a_number(order):
+        clauses.append(clause)
+    for clause in cell_has_at_most_one(order):
+        clauses.append(clause)
+    for clause in row_has_a_number(order):
+        clauses.append(clause)
+    for clause in row_has_at_most_one(order):
+        clauses.append(clause)
+    for clause in column_has_a_number(order):
+        clauses.append(clause)
+    for clause in column_has_at_most_one(order):
+        clauses.append(clause)
+    for clause in given_number(grid, order):
+        clauses.append(clause)
+    for clause in sign_clauses(inequalities, order):
+        clauses.append(clause)
+    return clauses
+
+
+def write_cnf(path, order, clauses):
+    variable_count = order * order * order
+    clause_count = len(clauses)
+    with open(path, "w") as handle:
+        handle.write("p cnf " + str(variable_count) + " " + str(clause_count) + "\n")
+        for clause in clauses:
+            for number in clause:
+                handle.write(str(number) + " ")
+            handle.write("\n")
+    print("Wrote", path)
+    print(variable_count, "variables")
+    print(clause_count, "clauses")
+
+
 def main():
     if len(sys.argv) < 2:
         print("Add the file name: python solve_futoshiki.py instances/grid.txt")
@@ -337,6 +372,8 @@ def main():
                     found = True
             if found == True:
                 print(clause)
+    clauses = all_clauses(grid, inequalities, order)
+    write_cnf("futoshiki.cnf", order, clauses)
 
 
 if __name__ == "__main__":

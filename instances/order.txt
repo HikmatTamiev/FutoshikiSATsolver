@@ -1,2 +1,0 @@
-# The order is how many cells are on one side of the board.
-4

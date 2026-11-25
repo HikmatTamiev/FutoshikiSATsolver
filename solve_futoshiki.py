@@ -196,6 +196,20 @@ def column_has_a_number(order):
     return clauses
 
 
+def column_has_at_most_one(order):
+    clauses = []
+    for column in range(1, order + 1):
+        for value in range(1, order + 1):
+            for first in range(1, order + 1):
+                for second in range(first + 1, order + 1):
+                    clause = []
+                    clause.append(-variable_number(first, column, value, order))
+                    clause.append(-variable_number(second, column, value, order))
+                    clause.append(0)
+                    clauses.append(clause)
+    return clauses
+
+
 def main():
     if len(sys.argv) < 2:
         print("Add the file name: python solve_futoshiki.py instances/grid.txt")
@@ -252,6 +266,20 @@ def main():
     print("Each number appears in a column")
     for clause in column_has_a_number(order):
         print(clause)
+    column_once = column_has_at_most_one(order)
+    print("A number appears at most once in a column, clause count", len(column_once))
+    print("Column 1, value 1")
+    targets = []
+    for row in range(1, order + 1):
+        targets.append(variable_number(row, 1, 1, order))
+    for clause in column_once:
+        number = -clause[0]
+        found = False
+        for target in targets:
+            if number == target:
+                found = True
+        if found == True:
+            print(clause)
 
 
 if __name__ == "__main__":
